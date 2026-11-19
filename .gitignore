@@ -1,0 +1,9 @@
+# Local-only secrets — NEVER commit (App Check debug tokens live here)
+js/firebase-config.local.js
+
+# Firebase CLI
+.firebase/
+firebase-debug.log
+
+# Tooling
+node_modules/
