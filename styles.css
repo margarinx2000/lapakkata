@@ -1,0 +1,201 @@
+/* LapakKata — warm market-stall palette, product-grade cards. */
+:root {
+  --bg: #faf6f0;
+  --panel: #ffffff;
+  --ink: #26221d;
+  --muted: #6f675c;
+  --line: #e7ded2;
+  --brand: #c2410c;       /* terracotta */
+  --brand-soft: #fff1e7;
+  --green: #15803d;
+  --green-soft: #e8f7ee;
+  --blue: #1d4ed8;
+  --blue-soft: #e9effe;
+  --amber: #b45309;
+  --amber-soft: #fdf3e0;
+  --gray-soft: #f0edea;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.topbar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  align-items: center; justify-content: space-between;
+  padding: 16px 22px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 5;
+}
+.brand { display: flex; gap: 12px; align-items: center; }
+.logo {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--brand); color: #fff;
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 19px; letter-spacing: .5px;
+}
+.brand h1 { margin: 0; font-size: 22px; }
+.tagline { margin: 0; color: var(--muted); font-size: 13.5px; }
+
+.status-cluster { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip {
+  font-size: 12.5px; padding: 5px 10px; border-radius: 999px;
+  background: var(--gray-soft); border: 1px solid var(--line); color: var(--ink);
+}
+.chip[data-state="online"] { background: var(--green-soft); color: var(--green); border-color: #bbe6c8; }
+.chip[data-state="offline"] { background: var(--amber-soft); color: var(--amber); border-color: #f0dcb2; }
+.chip-btn {
+  font-size: 12.5px; padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--brand); color: var(--brand); background: var(--brand-soft);
+  cursor: pointer; font-weight: 600;
+}
+.chip-btn:hover { background: #ffe4d1; }
+.sim-toggle { font-size: 12.5px; color: var(--muted); display: flex; gap: 5px; align-items: center; cursor: pointer; }
+
+.stub-banner {
+  margin: 14px 22px 0; padding: 10px 14px;
+  background: var(--amber-soft); border: 1px solid #f0dcb2; border-radius: var(--radius);
+  font-size: 14px;
+}
+
+.layout {
+  display: grid; grid-template-columns: 380px 1fr; gap: 18px;
+  padding: 18px 22px 30px; max-width: 1280px; margin: 0 auto;
+}
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px;
+}
+.panel h2 { margin: 0 0 12px; font-size: 18px; }
+.hint { color: var(--muted); font-size: 13.5px; margin: 4px 0 12px; }
+
+.intake label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 12px; }
+.intake input, .intake select, .intake textarea {
+  display: block; width: 100%; margin-top: 5px;
+  padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px;
+  font: inherit; font-weight: 400; background: #fffdfb;
+}
+.intake textarea { resize: vertical; }
+.row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.photo-preview { max-width: 100%; border-radius: 10px; margin: 4px 0 12px; border: 1px solid var(--line); }
+.row-actions { display: flex; gap: 8px; align-items: center; }
+.row-actions select { flex: 1; padding: 8px; border: 1px solid var(--line); border-radius: 10px; font: inherit; }
+
+.ghost-btn {
+  padding: 8px 13px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13.5px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+}
+.ghost-btn:hover { background: var(--gray-soft); }
+
+.job-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; }
+.job-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; background: #fffdfb; display: flex; flex-direction: column; }
+.job-card h3 { margin: 0 0 4px; font-size: 15.5px; }
+.job-blurb { margin: 0 0 6px; font-size: 13.5px; }
+.job-route { margin: 0 0 12px; font-size: 12.5px; color: var(--muted); flex: 1; }
+.run-btn {
+  align-self: flex-start; padding: 8px 18px; border: 0; border-radius: 10px;
+  background: var(--brand); color: #fff; font: inherit; font-weight: 700; cursor: pointer;
+}
+.run-btn:hover:not(:disabled) { background: #a83709; }
+.run-btn:disabled { opacity: .6; cursor: wait; }
+
+.queue-panel { margin-top: 18px; border: 1px dashed var(--amber); background: var(--amber-soft); border-radius: var(--radius); padding: 12px 14px; }
+.queue-panel h3 { margin: 0 0 8px; font-size: 14.5px; color: var(--amber); }
+.queue-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13.5px; }
+
+.results-title { margin-top: 24px; }
+.results { display: flex; flex-direction: column; gap: 14px; }
+.result-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; background: #fffdfb; }
+.result-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.result-head h3 { margin: 0; font-size: 15.5px; }
+.badge { font-size: 11.5px; font-weight: 700; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+.badge.on-device { background: var(--green-soft); color: var(--green); }
+.badge.cloud { background: var(--blue-soft); color: var(--blue); }
+.badge.stub { background: var(--gray-soft); color: var(--muted); }
+.badge.queued { background: var(--amber-soft); color: var(--amber); }
+.result-section { border-top: 1px solid var(--line); padding: 10px 0 2px; }
+.result-section-head { display: flex; justify-content: space-between; align-items: center; }
+.result-section h4 { margin: 0; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.result-text { margin: 6px 0 8px; white-space: pre-wrap; font-size: 14.5px; }
+.error-text { color: #b91c1c; }
+.copy-btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 4px 10px; font-size: 12.5px; cursor: pointer; }
+.copy-btn:hover { background: var(--gray-soft); }
+.wa-link { display: inline-block; margin: 2px 0 8px; color: var(--green); font-weight: 600; font-size: 13.5px; }
+
+.library-head { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.library-head h2 { margin: 0; }
+.library-row { display: flex; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13.5px; flex-wrap: wrap; }
+.library-title { font-weight: 600; }
+.library-date { color: var(--muted); margin-left: auto; font-size: 12.5px; }
+
+.footer { max-width: 1280px; margin: 0 auto; padding: 0 22px 26px; color: var(--muted); font-size: 13px; }
+.footer code { background: var(--gray-soft); padding: 1px 5px; border-radius: 5px; }
+
+/* ------------------------- Phase 2 polish ------------------------- */
+
+/* Keyboard users get a visible focus ring everywhere. */
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+.intake input:focus, .intake select:focus, .intake textarea:focus {
+  border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+/* The long "device AI lives in desktop Chrome" message wraps as text,
+   not as a stretched pill. */
+.chip { max-width: 46ch; }
+#deviceChip { white-space: normal; line-height: 1.35; }
+
+/* Inline validation / guidance — calm, never a blocking wall. */
+.form-notice {
+  margin: 0 0 12px; padding: 10px 13px; border-radius: 10px;
+  background: var(--amber-soft); border: 1px solid #f0dcb2; color: #7c4a03;
+  font-size: 13.5px;
+}
+
+/* Cards feel like a product: soft depth, gentle hover on jobs. */
+.panel { box-shadow: 0 1px 3px rgba(38, 34, 29, .05); }
+.job-card { transition: box-shadow .15s ease, transform .15s ease; }
+.job-card:hover { box-shadow: 0 4px 14px rgba(38, 34, 29, .09); transform: translateY(-1px); }
+.result-card { box-shadow: 0 1px 3px rgba(38, 34, 29, .05); animation: card-in .25s ease; }
+@keyframes card-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .result-card { animation: none; }
+  .job-card { transition: none; }
+}
+
+/* Private Polish boundary messages read as information, not failure. */
+.info-text {
+  color: var(--ink); background: var(--green-soft);
+  border: 1px solid #bbe6c8; border-radius: 10px; padding: 10px 12px;
+}
+.result-time { margin: 8px 0 0; font-size: 12px; color: var(--muted); text-align: right; }
+
+/* Photo controls sit together under the preview. */
+#removePhotoBtn { margin: 0 0 12px; }
+
+/* On desktop the intake stays in reach while results scroll. */
+@media (min-width: 901px) {
+  .intake { position: sticky; top: 92px; align-self: start; max-height: calc(100vh - 110px); overflow: auto; }
+}
+
+/* Library actions align with the row's other controls. */
+.library-wa { margin: 0; }
+.library-row .copy-btn { white-space: nowrap; }
+
+/* Small screens: header cluster breathes, job grid goes single-file. */
+@media (max-width: 560px) {
+  .topbar { padding: 12px 14px; }
+  .layout { padding: 12px 12px 24px; }
+  .brand h1 { font-size: 19px; }
+  .tagline { font-size: 12.5px; }
+  .job-grid { grid-template-columns: 1fr; }
+  .result-head { flex-wrap: wrap; }
+}

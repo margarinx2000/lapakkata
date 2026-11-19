@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LapakKata — Selling words that work anywhere</title>
+<meta name="description" content="An on-device-first AI copywriting studio for Indonesian micro-sellers. Built with Firebase AI Logic hybrid inference: Gemini Nano on-device, Gemini in the cloud." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23c2410c'/%3E%3Ctext x='50' y='66' font-size='44' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3ELK%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css" />
+<!--
+  Firebase JS SDK via Google's versioned CDN (no build step).
+  Hybrid inference + response.inferenceSource require SDK v12.5.0+;
+  we pin 13.4.0. Import maps keep the module code clean.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js",
+    "firebase/ai": "https://www.gstatic.com/firebasejs/13.4.0/firebase-ai.js",
+    "firebase/app-check": "https://www.gstatic.com/firebasejs/13.4.0/firebase-app-check.js"
+  }
+}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo" aria-hidden="true">LK</div>
+    <div>
+      <h1>LapakKata</h1>
+      <p class="tagline">Selling words that work anywhere — on-device first, cloud when it counts.</p>
+    </div>
+  </div>
+  <div class="status-cluster">
+    <span id="serviceChip" class="chip">Starting…</span>
+    <span id="deviceChip" class="chip">Device AI: unknown</span>
+    <button id="enableDeviceBtn" type="button" class="chip-btn">Enable on-device AI</button>
+    <span id="connChip" class="chip" data-state="online">Online</span>
+    <label class="sim-toggle" title="Demo aid: pretend the connection is gone. Cloud-first jobs will queue; on-device jobs keep working.">
+      <input type="checkbox" id="simOffline" /> Simulate offline
+    </label>
+  </div>
+</header>
+
+<div id="stubBanner" class="stub-banner" hidden>
+  <strong>Demo mode.</strong> You are seeing a local stub, not AI output.
+  Paste your Firebase project config into <code>js/firebase-config.js</code> and LapakKata goes live on Firebase AI Logic.
+</div>
+
+<main class="layout">
+  <section class="panel intake" aria-labelledby="intakeTitle">
+    <h2 id="intakeTitle">Your product</h2>
+    <label>Product name
+      <input id="pName" type="text" placeholder="e.g. Sambal Bawang Bu Rina, 250g jar" />
+    </label>
+    <label>Category
+      <select id="pCategory">
+        <option>Food &amp; Drink</option>
+        <option>Fashion</option>
+        <option>Beauty &amp; Care</option>
+        <option>Home &amp; Living</option>
+        <option>Handmade &amp; Craft</option>
+        <option>Electronics</option>
+        <option>Services</option>
+        <option>Other</option>
+      </select>
+    </label>
+    <label>Price
+      <input id="pPrice" type="text" placeholder="e.g. Rp45.000" />
+    </label>
+    <label>Key details (ingredients, sizes, what makes it good — facts only)
+      <textarea id="pDetails" rows="4" placeholder="e.g. Homemade sambal, no preservatives, halal kitchen, ships from Yogyakarta, spiciness level 3 of 5"></textarea>
+    </label>
+    <div class="row-2col">
+      <label>Tone
+        <select id="pTone">
+          <option>Friendly</option>
+          <option>Premium</option>
+          <option>Playful</option>
+          <option>Urgent promo</option>
+        </select>
+      </label>
+      <label>Copy language
+        <select id="pLang">
+          <option>English</option>
+          <option>Bahasa Indonesia</option>
+        </select>
+      </label>
+    </div>
+    <label>Product photo (for “Listing from Photo”)
+      <input id="pPhoto" type="file" accept="image/jpeg,image/png" />
+    </label>
+    <p class="hint">The photo is shrunk on this device before anything is sent — smaller uploads, and it fits the on-device queue.</p>
+    <img id="photoPreview" class="photo-preview" alt="Product photo preview" hidden />
+    <button id="removePhotoBtn" type="button" class="ghost-btn" hidden>Remove photo</button>
+    <label>Your own draft (for “Private Polish” — never leaves this device)
+      <textarea id="draftText" rows="3" placeholder="Paste the selling text you already wrote…"></textarea>
+    </label>
+    <div class="row-actions">
+      <button id="saveProductBtn" type="button" class="ghost-btn">Save product</button>
+      <select id="productSelect" aria-label="Load a saved product"></select>
+    </div>
+  </section>
+
+  <section class="panel studio" aria-labelledby="studioTitle">
+    <h2 id="studioTitle">Copy jobs</h2>
+    <p class="hint">Each job is routed deliberately: short structured work runs on-device first; photo and long-form work goes to the cloud; your private draft never leaves the device. The badge on every result is the engine that <em>actually</em> served it, reported by the SDK.</p>
+    <p id="formNotice" class="form-notice" role="status" hidden></p>
+    <div id="jobGrid" class="job-grid"></div>
+
+    <div id="queuePanel" class="queue-panel" hidden>
+      <h3>Queued for the cloud</h3>
+      <div id="queueList"></div>
+    </div>
+
+    <h2 class="results-title">Results</h2>
+    <p id="resultsEmpty" class="hint">Nothing yet — fill in your product and run a job.</p>
+    <div id="results" class="results" aria-live="polite"></div>
+
+    <div class="library-head">
+      <h2>Library</h2>
+      <div>
+        <button id="exportBtn" type="button" class="ghost-btn">Export all (.txt)</button>
+        <button id="clearLibraryBtn" type="button" class="ghost-btn">Clear</button>
+      </div>
+    </div>
+    <p id="libraryEmpty" class="hint">Generated kits are saved here, on this device only.</p>
+    <div id="libraryList"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>Built with <strong>Firebase AI Logic</strong> hybrid inference — Gemini Nano on-device via Chrome's Prompt API, Gemini in the cloud — with per-job <code>InferenceMode</code> routing and SDK-reported <code>inferenceSource</code> badges. Made for Indonesia's micro-sellers (UMKM), whose connections are not always kind.</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
